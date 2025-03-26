@@ -1,6 +1,6 @@
 
 optimization_algorithm:
-  _target_: optim_modules.Reinforce
+  _target_: svf_knowledge_editing.optimizer.Reinforce
   # policy: ${policy}
   # gpu: ${gpu}
   max_grad_norm: ${max_grad_norm}

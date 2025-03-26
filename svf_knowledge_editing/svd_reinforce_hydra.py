@@ -2,7 +2,6 @@ import gc
 import json
 import os
 from datetime import datetime
-from typing import Dict
 
 import hydra
 import numpy as np
@@ -104,6 +103,7 @@ def main(cfg):
 
     vllm_model = task_loader.get_vllm_model(model_id=model_id)
 
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
     train_eval, *test_evals = task_loader.get_evaluator()
     if task_loader.has_transfer_split:
         test_eval, transfer_eval = test_evals
@@ -124,7 +124,6 @@ def main(cfg):
         model = AutoModelForCausalLM.from_pretrained(
             model_id, device_map="cuda:1", torch_dtype=torch.bfloat16
         )
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
     base_params = model.state_dict()
 
     original_model_params = {
@@ -285,7 +284,6 @@ def main(cfg):
     test_at_best = 0.0
     transfer_at_best = 0.0
     for i in range(num_iters):
-
         batch_ix = np_random.choice(train_ix, size=clipped_batch_size, replace=False)
 
         optimization_algorithm.step_optimization(

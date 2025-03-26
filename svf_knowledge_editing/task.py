@@ -3,6 +3,8 @@ import os
 
 import vllm
 import json
+from transformers import AutoTokenizer
+import math
 
 from svf_knowledge_editing.eval.tasks.knowledge_editing import KnowledgeEditingTask
 from svf_knowledge_editing.eval.models.vllm_model import VLLMModel, Message
@@ -43,6 +45,7 @@ class Task(ABC):
     @abstractmethod
     def get_evaluator(
         self,
+        tokenizer: AutoTokenizer,
     ):
         raise NotImplementedError
 
@@ -59,7 +62,6 @@ class WikidataCounterfactTask(Task):
     def __init__(
         self, data_path,
     ):
-        # TODO: model to template
         self.model_to_template = {
             "meta-llama/Llama-3.2-1B": (
                 "{% set loop_messages = messages %}"
@@ -75,7 +77,7 @@ class WikidataCounterfactTask(Task):
             )
         }
 
-        self.target_metric_train = "acc"
+        self.target_metric_train = "edit_success"
         self.target_metric_valid = self.target_metric_train
         self.target_metric_test = self.target_metric_train
         self.target_metric_transfer = self.target_metric_train
@@ -89,28 +91,49 @@ class WikidataCounterfactTask(Task):
         self,
     ):
         with open(self.data_path, 'r') as file:
-            data = json.load(file)
+            data = json.load(file)[:50]
         
         total_ix = list(range(len(data)))
         # train and validation split makes sense on the editing item level
         return data, total_ix, total_ix
 
     def get_rewards(self, res):
-        return [1.0 for x in res.sample_details] # TODO: accuracy, portability rewards
+        # Normalize each metric to ensure they're in [0, 1] range if not already
+        # Assuming each metric is already normalized between 0 and 1
+        
+        # Apply weights to each component
+        w_edit = 0.4  # Edit success weight
+        w_locality = 0.3  # Locality weight
+        w_portability = 0.3  # Portability weight
+        
+        # Calculate composite reward
+        rewards = [
+            w_edit * x['edit_success'] +
+            w_locality * x['locality'] +
+            w_portability * x['portability']
+            for x in res.sample_details
+        ]
+        # Scale to [-1.0, 1.0] range
+        rewards = [
+            2 * (1 / (1 + math.exp(-reward / 0.5))) - 1 for reward in rewards
+        ]
+        return rewards
+
 
     def get_evaluator(
         self,
     ):
         with open(self.data_path, 'r') as file:
-            samples = json.load(file)
+            samples = json.load(file)[:50]
+        eval_task = KnowledgeEditingTask(
+            samples,
+            context_messages=[
+                Message("system", KNOWLEDGE_ASSISTANT_PROMPT)
+            ]
+        )
         return [
-            None,
-            KnowledgeEditingTask(
-                samples,
-                context_messages=[
-                    Message("system", KNOWLEDGE_ASSISTANT_PROMPT)
-                ]
-            )
+            eval_task,
+            eval_task
         ]
         
     def get_prompt(self, tokenizer, samples, ix, model_id):

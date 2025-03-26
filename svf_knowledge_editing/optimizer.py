@@ -69,7 +69,7 @@ class Reinforce(OptimizationAlgorithm, nn.Module):
             input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(self.gpu)
             prompt_length = input_ids.shape[-1]
             output_ids = tokenizer(
-                prompt + res.sample_details[j]["output"],
+                prompt + res.sample_details[j]["target_new"],
                 return_tensors="pt",
             ).input_ids.to(self.gpu)
             outputs = model(output_ids)
@@ -159,7 +159,7 @@ class Reinforce(OptimizationAlgorithm, nn.Module):
             input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(gpu)
             prompt_length = input_ids.shape[-1]
             output_ids = tokenizer(
-                prompt + res.sample_details[j]["output"],
+                prompt + res.sample_details[j]["target_new"],
                 return_tensors="pt",
             ).input_ids.to(gpu)
             generated_ids = output_ids[:, prompt_length:]

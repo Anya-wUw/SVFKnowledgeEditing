@@ -20,13 +20,6 @@ COPY config /app/config
 RUN pip3 install jupyter
 
 # Set working directory and expose port
-WORKDIR /app
-EXPOSE 8888
-# TODO: run experiments from the entrypoint
-# Start Jupyter server
-CMD ["jupyter", "notebook", \
-    "--ip=0.0.0.0", \
-    "--port=8888", \
-    "--allow-root", \
-    "--no-browser", \
-    "--notebook-dir=/app"]
+WORKDIR /app/svf_knowledge_editing
+
+CMD ["bash", "train_task_expert.sh"]

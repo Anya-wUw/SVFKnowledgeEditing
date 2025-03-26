@@ -10,3 +10,4 @@ messy_scripts
 **/__pycache__/
 venv/
 poetry.lock
+*.pt

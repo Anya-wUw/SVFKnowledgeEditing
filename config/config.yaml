@@ -7,9 +7,9 @@ defaults:
   - mode@_global_: training
 
 num_iters: 10
-test_interval: 10
+test_interval: 2
 lr: 2e-3
-batch_size: 256
+batch_size: 100
 seed: 42
 init_val: 0.1
 test_only: false

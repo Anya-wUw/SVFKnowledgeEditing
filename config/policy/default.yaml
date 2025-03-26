@@ -1,5 +1,5 @@
 shakeoff_policy:
-  _target_: policy.Policy
+  _target_: svf_knowledge_editing.policy.Policy
   init_val: ${init_val}
   mode: ${policy_mode}
   max_mult: ${max_mult}
