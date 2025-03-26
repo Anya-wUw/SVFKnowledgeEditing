@@ -1,0 +1,5 @@
+task_loader:
+  _target_: svf_knowledge_editing.task.WikidataCounterfactTask
+  data_path: /app/data/wikidata_counterfact.json
+
+task_name: wikidata_counterfact

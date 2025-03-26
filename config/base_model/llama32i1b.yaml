@@ -1,0 +1,10 @@
+base_model:
+  _target_: svf_knowledge_editing.model.Llama32Instruct1B
+
+
+base_model_name: llama3i8b
+  
+reference_params_results:
+  - "ckpts/learnable_params/llama32_1b_instruct_gsm8k_svd_pg_mlp.pt"
+  - "ckpts/learnable_params/llama32_1b_instruct_mbpp_pro_svd_pg_mlp.pt"
+  - "ckpts/learnable_params/llama32_1b_instruct_gsm8k_svd_pg_mlp.pt"

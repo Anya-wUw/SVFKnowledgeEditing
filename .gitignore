@@ -1,0 +1,12 @@
+playground*
+wandb
+results
+results_eval
+saved_models
+outputs
+reference_code
+messy_scripts
+*_decomposed_params.pt
+**/__pycache__/
+venv/
+poetry.lock
