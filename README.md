@@ -13,7 +13,7 @@ To reproduce our experiments with `meta-llama/Llama-3.2-1B` model you should hav
 
 ## Build and run
 1. clone the repo ``git clone https://github.com/Anya-wUw/SVFKnowledgeEditing``
-2. Move into the directory ``cd SVFKnowledgeEditing`
+2. Move into the directory ``cd SVFKnowledgeEditing``
 3. Build the container ``docker build -t svf_knowledge_editing` .
 4. [Optional] specify experiment config in the `config` folder.
 5. Run the container ``docker run -it --gpus all svf_knowledge_editing``
